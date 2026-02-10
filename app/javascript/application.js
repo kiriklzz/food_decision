@@ -1,7 +1,3 @@
-// Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
-import "@hotwired/turbo-rails"
-import "controllers"
-
 async function apiGetNext(theme) {
   const res = await fetch(`/api/dishes/next?theme=${encodeURIComponent(theme)}`, {
     headers: { "Accept": "application/json" }
@@ -22,6 +18,13 @@ async function apiSaveRating(dishId, score) {
   return await res.json();
 }
 
+function formatMeta(theme, avg, my) {
+  return (window.I18N_META || "Theme: %{theme} | Avg: %{avg} | My rating: %{my}")
+    .replace("%{theme}", theme)
+    .replace("%{avg}", avg)
+    .replace("%{my}", my);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const themeSelect = document.getElementById("themeSelect");
   const nextBtn = document.getElementById("nextBtn");
@@ -36,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentDishId = null;
 
   async function loadNext() {
-    status.textContent = "Loading...";
+    status.textContent = window.I18N_LOADING || "Loading...";
     ratingInfo.textContent = "";
 
     const theme = themeSelect ? themeSelect.value : "";
@@ -54,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const avg = data.dish.average_rating ?? "—";
     const my = data.my_rating ?? "—";
-    dishMeta.textContent = `Theme: ${data.dish.theme} | Avg: ${avg} | My rating: ${my}`;
+    dishMeta.textContent = formatMeta(data.dish.theme, avg, my);
 
     dishCard.style.display = "block";
     status.textContent = "";
@@ -69,11 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await apiSaveRating(currentDishId, score);
 
       if (result.ok) {
-        ratingInfo.textContent = `Saved: ${result.score}`;
-        // обновим метаданные, чтобы показать новую "мою" оценку
-        loadNext(); // или можно не грузить следующее, но так нагляднее
+        ratingInfo.textContent = `${window.I18N_SAVED || "Saved"}: ${result.score}`;
       } else {
-        ratingInfo.textContent = "Error";
+        ratingInfo.textContent = window.I18N_ERROR || "Error";
       }
     });
   });

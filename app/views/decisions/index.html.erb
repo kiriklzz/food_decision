@@ -1,17 +1,26 @@
-<h1>FoodDecision</h1>
-<p>Logged in as: <%= current_user.email %></p>
-<%= button_to "Logout", destroy_user_session_path, method: :delete %>
+<div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+  <h1><%= t("app.name") %></h1>
+
+  <div style="display:flex; gap:8px;">
+    <%= link_to "RU", url_for(lang: "ru"), style: "padding:6px 10px; border:1px solid #ddd; border-radius:8px; text-decoration:none;" %>
+    <%= link_to "EN", url_for(lang: "en"), style: "padding:6px 10px; border:1px solid #ddd; border-radius:8px; text-decoration:none;" %>
+  </div>
+</div>
+
+<p><%= t("ui.logged_in_as") %>: <%= current_user.email %></p>
+
+<%= button_to t("ui.logout"), destroy_user_session_path, method: :delete %>
 
 <hr>
 
-<label>Theme:</label>
+<label><%= t("ui.theme") %>:</label>
 <select id="themeSelect">
   <% Dish.distinct.order(:theme).pluck(:theme).each do |th| %>
     <option value="<%= th %>"><%= th %></option>
   <% end %>
 </select>
 
-<button id="nextBtn">Next image</button>
+<button id="nextBtn"><%= t("ui.next_image") %></button>
 <span id="status"></span>
 
 <div id="dishCard" style="display:none; margin-top:16px;">
@@ -21,7 +30,7 @@
   <p id="dishMeta"></p>
 
   <div style="margin-top:10px;">
-    <span>Rate (1–5): </span>
+    <span><%= t("ui.rate") %> (1–5): </span>
     <% (1..5).each do |s| %>
       <button class="rate-btn" data-score="<%= s %>"><%= s %></button>
     <% end %>
@@ -31,4 +40,8 @@
 
 <script>
   window.CSRF_TOKEN = "<%= form_authenticity_token %>";
+  window.I18N_LOADING = "<%= t('ui.loading') %>";
+  window.I18N_SAVED = "<%= t('ui.saved') %>";
+  window.I18N_ERROR = "<%= t('ui.error') %>";
+  window.I18N_META = "<%= t('ui.meta', theme: '%{theme}', avg: '%{avg}', my: '%{my}') %>";
 </script>

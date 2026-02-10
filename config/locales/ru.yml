@@ -1,0 +1,13 @@
+ru:
+  app:
+    name: "FoodDecision"
+  ui:
+    logged_in_as: "Вы вошли как"
+    logout: "Выйти"
+    theme: "Тема"
+    next_image: "Следующее изображение"
+    loading: "Загрузка..."
+    rate: "Оценка эксперта"
+    saved: "Сохранено"
+    error: "Ошибка"
+    meta: "Тема: %{theme} | Средняя: %{avg} | Моя оценка: %{my}"
