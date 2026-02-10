@@ -238,3 +238,13 @@ select option { color: #0b1220; }
   color: var(--muted);
   margin: 12px 0;
 }
+
+.brand-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand-link:hover,
+.brand-link:focus {
+  text-decoration: none;
+}
