@@ -1,32 +1,75 @@
-<h1>My ratings</h1>
+<section class="card soft">
+  <h1 class="h1" style="margin-bottom:6px;"><%= t("ui.my_ratings", default: "My ratings") %></h1>
+  <p class="muted"><%= t("ui.stats", default: "Stats") %></p>
 
-<h2>Average by theme</h2>
-<ul>
-  <% @avg_by_theme.each do |theme, avg| %>
-    <li><strong><%= theme %></strong>: <%= avg.round(2) %></li>
+  <% if @total.to_i == 0 %>
+    <div class="flash"><%= t("ui.no_ratings_yet", default: "No ratings yet. Go rate a few dishes 🙂") %></div>
+  <% else %>
+    <div class="kpis" style="margin-top:12px;">
+      <div class="kpi"><%= t("ui.total_ratings", default: "Total ratings") %>: <strong><%= @total %></strong></div>
+      <div class="kpi"><%= t("ui.your_avg", default: "Your average") %>: <strong><%= (@your_avg || 0).round(2) %></strong></div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3 style="margin:0 0 10px;"><%= t("ui.by_category", default: "By category") %></h3>
+
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr class="muted small" style="text-align:left;">
+            <th style="padding:10px 8px;"><%= t("ui.category", default: "Category") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.count", default: "Count") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.avg", default: "Avg") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.global_avg", default: "Global avg") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% (@avg_by_theme || {}).sort_by { |(_, avg)| -(avg || 0).to_f }.each do |theme, avg| %>
+            <% cnt = (@count_by_theme || {})[theme] || 0 %>
+            <% gavg = (@global_by_theme || {})[theme] %>
+
+            <tr style="border-top:1px solid rgba(255,255,255,0.08);">
+              <td style="padding:10px 8px;">
+                <span class="pill">#<%= t("themes.#{theme}", default: theme) %></span>
+              </td>
+              <td style="padding:10px 8px;"><%= cnt %></td>
+              <td style="padding:10px 8px;"><%= (avg || 0).round(2) %></td>
+              <td style="padding:10px 8px;"><%= gavg ? gavg.round(2) : "—" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3 style="margin:0 0 10px;"><%= t("ui.last_ratings", default: "Latest ratings") %></h3>
+
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr class="muted small" style="text-align:left;">
+            <th style="padding:10px 8px;"><%= t("ui.dish", default: "Dish") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.category", default: "Category") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.score", default: "Score") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.rated_at", default: "Rated at") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% (@latest || []).each do |r| %>
+            <% th = r.dish&.theme.to_s %>
+            <tr style="border-top:1px solid rgba(255,255,255,0.08);">
+              <td style="padding:10px 8px;"><%= r.dish&.title %></td>
+              <td style="padding:10px 8px;">
+                <span class="pill">#<%= t("themes.#{th}", default: th) %></span>
+              </td>
+              <td style="padding:10px 8px;"><strong><%= r.score %></strong></td>
+              <td style="padding:10px 8px;" class="muted small"><%= r.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <div class="muted small" style="margin-top:10px;">
+        <%= t("ui.total_ratings", default: "Total ratings") %>: <%= @total %>
+      </div>
+    </div>
   <% end %>
-</ul>
-
-<hr>
-
-<h2>All my ratings</h2>
-<table border="1" cellpadding="6" cellspacing="0">
-  <thead>
-    <tr>
-      <th>Dish</th>
-      <th>Theme</th>
-      <th>Score</th>
-      <th>Created</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @ratings.each do |r| %>
-      <tr>
-        <td><%= r.dish.title %></td>
-        <td><%= r.dish.theme %></td>
-        <td><%= r.score %></td>
-        <td><%= r.created_at.strftime("%Y-%m-%d %H:%M") %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+</section>

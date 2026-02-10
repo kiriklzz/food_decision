@@ -2,6 +2,20 @@ en:
   app:
     name: "FoodDecision"
   ui:
+    ui:
+    stats: "Stats"
+    total_ratings: "Total ratings"
+    your_avg: "Your average"
+    by_category: "By category"
+    category: "Category"
+    count: "Count"
+    avg: "Avg"
+    global_avg: "Global avg"
+    last_ratings: "Latest ratings"
+    dish: "Dish"
+    score: "Score"
+    rated_at: "Rated at"
+    no_ratings_yet: "No ratings yet. Go rate a few dishes 🙂"
     skip: "Skip"
     no_dish: "No dish"
     api_js_error: "API/JS error (see console)"
