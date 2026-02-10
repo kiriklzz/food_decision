@@ -328,3 +328,18 @@ select option { color: #0b1220; }
   outline-offset: 3px;
   border-radius: 6px;
 }
+
+.brand { display:flex; align-items:center; gap:10px; }
+.brand-sep { opacity: 0.55; margin: 0 2px; }
+
+.brand-nav-link {
+  text-decoration: none;
+  color: inherit;
+  opacity: 0.85;
+  font-weight: 700;
+}
+
+.brand-nav-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}

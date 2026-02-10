@@ -16,14 +16,19 @@
       <div class="brand">
         <div class="brand-badge"></div>
         <%= link_to t("app.name", default: "FoodDecision"), root_path, class: "brand-link" %>
+
+        <% if user_signed_in? %>
+          <span class="brand-sep">|</span>
+          <%= link_to t("ui.my_ratings", default: "My ratings"), ratings_path, class: "brand-nav-link" %>
+          <%= link_to t("ui.favorites", default: "Favorites"), favorites_path, class: "brand-nav-link" %>
+        <% end %>
       </div>
 
       <nav class="nav">
-        <%= link_to "RU", url_for(lang: "ru"), class: "btn ghost" %>
-        <%= link_to "EN", url_for(lang: "en"), class: "btn ghost" %>
+        <%= link_to "🇷🇺", url_for(lang: "ru"), class: "btn ghost", title: "Русский", aria: { label: "Русский" } %>
+        <%= link_to "🇬🇧", url_for(lang: "en"), class: "btn ghost", title: "English", aria: { label: "English" } %>
 
         <% if user_signed_in? %>
-          <%= link_to t("ui.my_ratings", default: "My ratings"), ratings_path, class: "btn ghost" %>
           <%= button_to t("ui.logout", default: "Logout"),
                         destroy_user_session_path,
                         method: :delete,
