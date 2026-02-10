@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  namespace :api do
+  get  "/dishes/next", to: "dishes#next"
+  post "/ratings",    to: "ratings#create"
+end
   devise_for :users
 
   authenticated :user do
