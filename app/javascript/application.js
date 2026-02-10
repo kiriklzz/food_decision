@@ -38,6 +38,28 @@ async function apiSaveRating(dishId, score) {
   return await res.json();
 }
 
+function favToggleUrl() {
+  return window.API_FAVORITES_TOGGLE_URL || "/api/favorites/toggle";
+}
+
+async function apiToggleFavorite(dishId) {
+  const res = await fetch(favToggleUrl(), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-Token": window.CSRF_TOKEN,
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({ dish_id: dishId })
+  });
+
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`POST favorite toggle failed: ${res.status} ${txt}`);
+  }
+  return await res.json();
+}
+
 function formatMeta(theme, avg, my) {
   const label = (window.I18N_META || "Theme: %{theme} | Avg: %{avg} | My rating: %{my}");
   const th = themeTitle(theme);
@@ -91,6 +113,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const avgKpi = document.getElementById("avgKpi");
   const myKpi = document.getElementById("myKpi");
 
+  const favBtn = document.getElementById("favBtn");
+  let currentIsFavorite = false;
+
+favBtn?.addEventListener("click", async () => {
+  if (!currentDishId) return;
+  try {
+    const result = await apiToggleFavorite(currentDishId);
+    if (result.ok) {
+      currentIsFavorite = !!result.favorited;
+      favBtn.classList.toggle("is-on", currentIsFavorite);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+});
+
   let currentDishId = null;
 
   async function loadNext() {
@@ -114,7 +152,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const avg = data.dish.average_rating ?? "—";
       const my = data.my_rating ?? "—";
 
-      
+      currentIsFavorite = !!data.dish.is_favorite;
+      favBtn?.classList.toggle("is-on", currentIsFavorite);
+
       const th = themeTitle(data.dish.theme);
 
     dishMeta.textContent = formatMeta(data.dish.theme, avg, my);
