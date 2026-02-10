@@ -1,12 +1,26 @@
+function nextUrl() {
+  return window.API_NEXT_URL || "/api/dishes/next";
+}
+
+function ratingsUrl() {
+  return window.API_RATINGS_URL || "/api/ratings";
+}
+
 async function apiGetNext(theme) {
-  const res = await fetch(`/api/dishes/next?theme=${encodeURIComponent(theme)}`, {
+  const res = await fetch(`${nextUrl()}?theme=${encodeURIComponent(theme)}`, {
     headers: { "Accept": "application/json" }
   });
+
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`GET next failed: ${res.status} ${txt}`);
+  }
+
   return await res.json();
 }
 
 async function apiSaveRating(dishId, score) {
-  const res = await fetch("/api/ratings", {
+  const res = await fetch(ratingsUrl(), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -15,6 +29,12 @@ async function apiSaveRating(dishId, score) {
     },
     body: JSON.stringify({ dish_id: dishId, score })
   });
+
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`POST rating failed: ${res.status} ${txt}`);
+  }
+
   return await res.json();
 }
 
@@ -36,31 +56,45 @@ document.addEventListener("DOMContentLoaded", () => {
   const dishMeta = document.getElementById("dishMeta");
   const ratingInfo = document.getElementById("ratingInfo");
 
+  const themeBadge = document.getElementById("themeBadge");
+  const avgKpi = document.getElementById("avgKpi");
+  const myKpi = document.getElementById("myKpi");
+
   let currentDishId = null;
 
   async function loadNext() {
     status.textContent = window.I18N_LOADING || "Loading...";
     ratingInfo.textContent = "";
 
-    const theme = themeSelect ? themeSelect.value : "";
-    const data = await apiGetNext(theme);
+    try {
+      const theme = themeSelect ? themeSelect.value : "";
+      const data = await apiGetNext(theme);
 
-    if (!data.dish) {
+      if (!data.dish) {
+        dishCard.style.display = "none";
+        status.textContent = data.message || "No dish";
+        return;
+      }
+
+      currentDishId = data.dish.id;
+      dishTitle.textContent = data.dish.title;
+      dishImage.src = data.dish.image_url;
+
+      const avg = data.dish.average_rating ?? "—";
+      const my = data.my_rating ?? "—";
+
+      dishMeta.textContent = formatMeta(data.dish.theme, avg, my);
+      if (themeBadge) themeBadge.textContent = `#${data.dish.theme}`;
+      if (avgKpi) avgKpi.textContent = `Avg: ${avg}`;
+      if (myKpi) myKpi.textContent = `My rating: ${my}`;
+
+      dishCard.style.display = "block";
+      status.textContent = "";
+    } catch (e) {
+      console.error(e);
+      status.textContent = "API/JS error (see console)";
       dishCard.style.display = "none";
-      status.textContent = data.message || "No dish";
-      return;
     }
-
-    currentDishId = data.dish.id;
-    dishTitle.textContent = data.dish.title;
-    dishImage.src = data.dish.image_url;
-
-    const avg = data.dish.average_rating ?? "—";
-    const my = data.my_rating ?? "—";
-    dishMeta.textContent = formatMeta(data.dish.theme, avg, my);
-
-    dishCard.style.display = "block";
-    status.textContent = "";
   }
 
   nextBtn?.addEventListener("click", loadNext);
@@ -68,13 +102,19 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".rate-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       if (!currentDishId) return;
-      const score = Number(btn.dataset.score);
-      const result = await apiSaveRating(currentDishId, score);
 
-      if (result.ok) {
-        ratingInfo.textContent = `${window.I18N_SAVED || "Saved"}: ${result.score}`;
-      } else {
-        ratingInfo.textContent = window.I18N_ERROR || "Error";
+      try {
+        const score = Number(btn.dataset.score);
+        const result = await apiSaveRating(currentDishId, score);
+
+        if (result.ok) {
+          ratingInfo.textContent = `${window.I18N_SAVED || "Saved"}: ${result.score}`;
+        } else {
+          ratingInfo.textContent = (window.I18N_ERROR || "Error");
+        }
+      } catch (e) {
+        console.error(e);
+        ratingInfo.textContent = (window.I18N_ERROR || "Error");
       }
     });
   });

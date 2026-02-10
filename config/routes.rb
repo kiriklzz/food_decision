@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "ratings/index"
   scope "(:lang)", lang: /ru|en/ do
     devise_for :users
 
@@ -7,6 +8,8 @@ Rails.application.routes.draw do
     end
 
     root to: redirect("/users/sign_in")
+
+    resources :ratings, only: [:index]
 
     namespace :api do
       get  "/dishes/next", to: "dishes#next"

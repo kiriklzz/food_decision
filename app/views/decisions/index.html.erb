@@ -1,47 +1,82 @@
-<div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-  <h1><%= t("app.name") %></h1>
+<div class="grid">
+  <section class="card soft">
+    <div class="pill">
+      <span>👤</span>
+      <span><%= t("ui.logged_in_as", default: "Logged in as") %>: <%= current_user.email %></span>
+    </div>
 
-  <div style="display:flex; gap:8px;">
-    <%= link_to "RU", url_for(lang: "ru"), style: "padding:6px 10px; border:1px solid #ddd; border-radius:8px; text-decoration:none;" %>
-    <%= link_to "EN", url_for(lang: "en"), style: "padding:6px 10px; border:1px solid #ddd; border-radius:8px; text-decoration:none;" %>
-  </div>
-</div>
+    <h1 class="h1"><%= t("app.name", default: "FoodDecision") %></h1>
+    <p class="muted">Pick a theme → get an image → rate it like an expert.</p>
 
-<p><%= t("ui.logged_in_as") %>: <%= current_user.email %></p>
+    <div class="card" style="margin-top:14px;">
+      <div class="row">
+        <label><%= t("ui.theme", default: "Theme") %>:</label>
 
-<%= button_to t("ui.logout"), destroy_user_session_path, method: :delete %>
+        <select id="themeSelect" class="input">
+          <% Dish.distinct.order(:theme).pluck(:theme).each do |th| %>
+            <option value="<%= th %>"><%= th %></option>
+          <% end %>
+        </select>
 
-<hr>
+        <button id="nextBtn" class="btn primary"><%= t("ui.next_image", default: "Next image") %></button>
+        <span id="status" class="muted small"></span>
+      </div>
+    </div>
 
-<label><%= t("ui.theme") %>:</label>
-<select id="themeSelect">
-  <% Dish.distinct.order(:theme).pluck(:theme).each do |th| %>
-    <option value="<%= th %>"><%= th %></option>
-  <% end %>
-</select>
+    <div id="dishCard" class="card" style="display:none; margin-top:14px;">
+      <div class="row" style="justify-content:space-between;">
+        <h2 id="dishTitle" style="margin:0;"></h2>
+        <span id="themeBadge" class="pill"></span>
+      </div>
 
-<button id="nextBtn"><%= t("ui.next_image") %></button>
-<span id="status"></span>
+      <div class="image-wrap">
+        <img id="dishImage" class="image" alt="dish image" />
+      </div>
 
-<div id="dishCard" style="display:none; margin-top:16px;">
-  <h2 id="dishTitle"></h2>
-  <img id="dishImage" style="max-width:700px; border-radius:10px;" />
+      <div class="kpis">
+        <div class="kpi" id="avgKpi">Avg: —</div>
+        <div class="kpi" id="myKpi">My rating: —</div>
+      </div>
 
-  <p id="dishMeta"></p>
+      <p id="dishMeta" class="muted small" style="margin-top:10px;"></p>
 
-  <div style="margin-top:10px;">
-    <span><%= t("ui.rate") %> (1–5): </span>
-    <% (1..5).each do |s| %>
-      <button class="rate-btn" data-score="<%= s %>"><%= s %></button>
-    <% end %>
-    <span id="ratingInfo"></span>
-  </div>
-</div>
+      <div class="rate-group">
+        <span class="muted"><%= t("ui.rate", default: "Expert rating") %>:</span>
+        <% (1..5).each do |s| %>
+          <button class="btn rate-btn" data-score="<%= s %>"><%= s %></button>
+        <% end %>
+        <span id="ratingInfo" class="muted small"></span>
+      </div>
+    </div>
 
-<script>
+    <script>
   window.CSRF_TOKEN = "<%= form_authenticity_token %>";
-  window.I18N_LOADING = "<%= t('ui.loading') %>";
-  window.I18N_SAVED = "<%= t('ui.saved') %>";
-  window.I18N_ERROR = "<%= t('ui.error') %>";
-  window.I18N_META = "<%= t('ui.meta', theme: '%{theme}', avg: '%{avg}', my: '%{my}') %>";
+  window.API_NEXT_URL = "<%= api_dishes_next_path %>";
+  window.API_RATINGS_URL = "<%= api_ratings_path %>";
+
+  window.I18N_LOADING = "<%= t('ui.loading', default: 'Loading...') %>";
+  window.I18N_SAVED = "<%= t('ui.saved', default: 'Saved') %>";
+  window.I18N_ERROR = "<%= t('ui.error', default: 'Error') %>";
+  window.I18N_META = "<%= t('ui.meta', default: 'Theme: %{theme} | Avg: %{avg} | My rating: %{my}', theme: '%{theme}', avg: '%{avg}', my: '%{my}') %>";
 </script>
+
+  </section>
+
+  <aside class="card">
+    <h3 style="margin:0 0 8px;">Quick demo checklist</h3>
+    <ul class="muted" style="margin:0; padding-left:18px;">
+      <li>Sign in / Sign up</li>
+      <li>Switch RU/EN</li>
+      <li>Select theme + Next image</li>
+      <li>Rate 1–5 (stored in DB)</li>
+      <li>Open “My ratings” for stats</li>
+    </ul>
+
+    <div style="margin-top:14px;">
+      <div class="pill">💡 Tip</div>
+      <p class="muted small" style="margin-top:8px;">
+        Rate несколько изображений в разных темах — на странице “My ratings” появится статистика.
+      </p>
+    </div>
+  </aside>
+</div>

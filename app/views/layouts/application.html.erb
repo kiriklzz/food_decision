@@ -1,23 +1,46 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Food Decision" %></title>
+    <title>FoodDecision</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= yield :head %>
-
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%= yield %>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge"></div>
+        <%= t("app.name", default: "FoodDecision") %>
+      </div>
+
+      <nav class="nav">
+        <%= link_to "RU", url_for(lang: "ru"), class: "btn ghost" %>
+        <%= link_to "EN", url_for(lang: "en"), class: "btn ghost" %>
+
+        <% if user_signed_in? %>
+          <%= link_to t("ui.my_ratings", default: "My ratings"), ratings_path, class: "btn ghost" %>
+          <%= button_to t("ui.logout", default: "Logout"),
+                        destroy_user_session_path,
+                        method: :delete,
+                        class: "btn danger" %>
+        <% end %>
+      </nav>
+    </header>
+
+    <main class="container">
+      <% if notice.present? %>
+        <div class="flash"><%= notice %></div>
+      <% end %>
+      <% if alert.present? %>
+        <div class="flash"><%= alert %></div>
+      <% end %>
+
+      <%= yield %>
+    </main>
   </body>
 </html>
