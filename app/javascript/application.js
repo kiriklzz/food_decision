@@ -39,11 +39,21 @@ async function apiSaveRating(dishId, score) {
 }
 
 function formatMeta(theme, avg, my) {
-  return (window.I18N_META || "Theme: %{theme} | Avg: %{avg} | My rating: %{my}")
-    .replace("%{theme}", theme)
+  const label = (window.I18N_META || "Theme: %{theme} | Avg: %{avg} | My rating: %{my}");
+  const th = themeTitle(theme);
+
+  return label
+    .replace("%{theme}", th)
     .replace("%{avg}", avg)
     .replace("%{my}", my);
 }
+
+
+function themeTitle(theme) {
+  const dict = window.I18N_THEMES || {};
+  return dict[theme] || theme;
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const themeSelect = document.getElementById("themeSelect");
@@ -83,10 +93,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const avg = data.dish.average_rating ?? "—";
       const my = data.my_rating ?? "—";
 
-      dishMeta.textContent = formatMeta(data.dish.theme, avg, my);
-      if (themeBadge) themeBadge.textContent = `#${data.dish.theme}`;
-      if (avgKpi) avgKpi.textContent = `Avg: ${avg}`;
-      if (myKpi) myKpi.textContent = `My rating: ${my}`;
+      
+      const th = themeTitle(data.dish.theme);
+
+    dishMeta.textContent = formatMeta(data.dish.theme, avg, my);
+    if (themeBadge) themeBadge.textContent = `#${th}`;
+
+    if (avgKpi) avgKpi.textContent = `${window.I18N_AVG_LABEL || "Avg"}: ${avg}`;
+    if (myKpi) myKpi.textContent = `${window.I18N_MY_LABEL || "My rating"}: ${my}`;
+
 
       dishCard.style.display = "block";
       status.textContent = "";

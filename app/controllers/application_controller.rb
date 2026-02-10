@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   private
 
   def set_locale
-    I18n.locale = params[:lang].presence_in(%w[ru en]) || :ru
+    I18n.locale = params[:lang].presence_in(%w[ru en]) || I18n.default_locale
   end
 
   def default_url_options

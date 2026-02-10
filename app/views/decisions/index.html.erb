@@ -1,21 +1,20 @@
-<div class="grid">
-  <section class="card soft">
-    <div class="pill">
-      <span>👤</span>
-      <span><%= t("ui.logged_in_as", default: "Logged in as") %>: <%= current_user.email %></span>
-    </div>
+<div class="pill">
+  <span>👤</span>
+  <span><%= t("ui.signed_in_as", email: current_user.email) %></span>
+</div>
+
 
     <h1 class="h1"><%= t("app.name", default: "FoodDecision") %></h1>
-    <p class="muted">Pick a theme → get an image → rate it like an expert.</p>
+    <p class="muted"><%= t("ui.tagline") %></p>
 
     <div class="card" style="margin-top:14px;">
       <div class="row">
         <label><%= t("ui.theme", default: "Theme") %>:</label>
 
         <select id="themeSelect" class="input">
-          <% Dish.distinct.order(:theme).pluck(:theme).each do |th| %>
-            <option value="<%= th %>"><%= th %></option>
-          <% end %>
+        <% Dish.distinct.order(:theme).pluck(:theme).each do |th| %>
+            <option value="<%= th %>"><%= t("themes.#{th}", default: th) %></option>
+        <% end %>
         </select>
 
         <button id="nextBtn" class="btn primary"><%= t("ui.next_image", default: "Next image") %></button>
@@ -41,7 +40,7 @@
       <p id="dishMeta" class="muted small" style="margin-top:10px;"></p>
 
       <div class="rate-group">
-        <span class="muted"><%= t("ui.rate", default: "Expert rating") %>:</span>
+        <span class="muted"><%= t("ui.expert_rating", default: "Expert rating") %>:</span>
         <% (1..5).each do |s| %>
           <button class="btn rate-btn" data-score="<%= s %>"><%= s %></button>
         <% end %>
@@ -55,10 +54,25 @@
   window.API_RATINGS_URL = "<%= api_ratings_path %>";
 
   window.I18N_LOADING = "<%= t('ui.loading', default: 'Loading...') %>";
-  window.I18N_SAVED = "<%= t('ui.saved', default: 'Saved') %>";
-  window.I18N_ERROR = "<%= t('ui.error', default: 'Error') %>";
-  window.I18N_META = "<%= t('ui.meta', default: 'Theme: %{theme} | Avg: %{avg} | My rating: %{my}', theme: '%{theme}', avg: '%{avg}', my: '%{my}') %>";
+  window.I18N_SAVED   = "<%= t('ui.saved', default: 'Saved') %>";
+  window.I18N_ERROR   = "<%= t('ui.error', default: 'Error') %>";
+
+  window.I18N_AVG_LABEL = "<%= t('ui.avg', default: 'Avg') %>";
+  window.I18N_MY_LABEL  = "<%= t('ui.my_rating', default: 'My rating') %>";
+
+  window.I18N_META = "<%= t('ui.meta',
+    default: 'Theme: %{theme} | Avg: %{avg} | My rating: %{my}',
+    theme: '%{theme}', avg: '%{avg}', my: '%{my}') %>";
+
+  window.I18N_THEMES = <%= {
+    "fast" => t("themes.fast", default: "fast"),
+    "healthy" => t("themes.healthy", default: "healthy"),
+    "sweet" => t("themes.sweet", default: "sweet"),
+    "salty" => t("themes.salty", default: "salty"),
+    "comfort" => t("themes.comfort", default: "comfort")
+  }.to_json.html_safe %>;
 </script>
+
 
   </section>
 
@@ -75,7 +89,7 @@
     <div style="margin-top:14px;">
       <div class="pill">💡 Tip</div>
       <p class="muted small" style="margin-top:8px;">
-        Rate несколько изображений в разных темах — на странице “My ratings” появится статистика.
+        <%= t("ui.tip") %>
       </p>
     </div>
   </aside>
