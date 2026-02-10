@@ -2,6 +2,8 @@ ru:
   app:
     name: "FoodDecision"
   ui:
+    favorites: "Избранное"
+    no_favorites_yet: "Пока нет избранного. Поставь звёздочку ★"
     stats: "Статистика"
     total_ratings: "Всего оценок"
     your_avg: "Средняя оценка"

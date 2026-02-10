@@ -1,0 +1,29 @@
+<section class="card soft">
+  <h1 class="h1" style="margin-bottom:6px;"><%= t("ui.favorites", default: "Favorites") %></h1>
+
+  <% if @favorites.empty? %>
+    <div class="flash"><%= t("ui.no_favorites_yet", default: "No favorites yet. Star some dishes ★") %></div>
+  <% else %>
+    <table style="width:100%; border-collapse:collapse; margin-top:12px;">
+      <thead>
+        <tr class="muted small" style="text-align:left;">
+          <th style="padding:10px 8px;"><%= t("ui.dish", default: "Dish") %></th>
+          <th style="padding:10px 8px;"><%= t("ui.category", default: "Category") %></th>
+          <th style="padding:10px 8px;"><%= t("ui.rated_at", default: "Rated at") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @favorites.each do |f| %>
+          <% th = f.dish&.theme.to_s %>
+          <tr style="border-top:1px solid rgba(255,255,255,0.08);">
+            <td style="padding:10px 8px;"><%= f.dish&.title %></td>
+            <td style="padding:10px 8px;">
+              <span class="pill">#<%= t("themes.#{th}", default: th) %></span>
+            </td>
+            <td style="padding:10px 8px;" class="muted small"><%= f.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</section>

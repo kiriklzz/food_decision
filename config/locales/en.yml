@@ -3,6 +3,8 @@ en:
     name: "FoodDecision"
   ui:
     ui:
+    favorites: "Favorites"
+    no_favorites_yet: "No favorites yet. Star some dishes ★"
     stats: "Stats"
     total_ratings: "Total ratings"
     your_avg: "Your average"

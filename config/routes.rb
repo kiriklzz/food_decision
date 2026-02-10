@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get "ratings/index"
+  get "favorites/index"
   scope "(:lang)", lang: /ru|en/ do
     devise_for :users
 
@@ -10,10 +10,13 @@ Rails.application.routes.draw do
     root to: redirect("/users/sign_in")
 
     resources :ratings, only: [:index]
+    resources :favorites, only: [:index]
 
     namespace :api do
       get  "/dishes/next", to: "dishes#next"
-      post "/ratings",    to: "ratings#create"
+      post "/ratings",     to: "ratings#create"
+
+      post "/favorites/toggle", to: "favorites#toggle"
     end
   end
 end
