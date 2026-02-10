@@ -58,7 +58,28 @@ function themeTitle(theme) {
 document.addEventListener("DOMContentLoaded", () => {
   const themeSelect = document.getElementById("themeSelect");
   const nextBtn = document.getElementById("nextBtn");
+  const skipBtn = document.getElementById("skipBtn");
   const status = document.getElementById("status");
+  const themeChips = document.getElementById("themeChips");
+
+  function setActiveChip() {
+    if (!themeChips || !themeSelect) return;
+    const current = themeSelect.value || "random";
+    themeChips.querySelectorAll(".chip").forEach((b) => {
+      b.classList.toggle("is-active", b.dataset.theme === current);
+    });
+  }
+
+  themeChips?.addEventListener("click", (e) => {
+    const btn = e.target.closest(".chip");
+    if (!btn || !themeSelect) return;
+
+    const th = btn.dataset.theme || "random";
+    themeSelect.value = th;
+    setActiveChip();
+  });
+
+  setActiveChip();
 
   const dishCard = document.getElementById("dishCard");
   const dishTitle = document.getElementById("dishTitle");
@@ -82,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!data.dish) {
         dishCard.style.display = "none";
-        status.textContent = data.message || "No dish";
+        status.textContent = data.message || (window.I18N_NO_DISH || "No dish");
         return;
       }
 
@@ -107,12 +128,13 @@ document.addEventListener("DOMContentLoaded", () => {
       status.textContent = "";
     } catch (e) {
       console.error(e);
-      status.textContent = "API/JS error (see console)";
+      status.textContent = (window.I18N_API_JS_ERROR || "API/JS error (see console)");
       dishCard.style.display = "none";
     }
   }
 
   nextBtn?.addEventListener("click", loadNext);
+  skipBtn?.addEventListener("click", loadNext);
 
   document.querySelectorAll(".rate-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -124,6 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (result.ok) {
           ratingInfo.textContent = `${window.I18N_SAVED || "Saved"}: ${result.score}`;
+          setTimeout(loadNext, 250);
         } else {
           ratingInfo.textContent = (window.I18N_ERROR || "Error");
         }

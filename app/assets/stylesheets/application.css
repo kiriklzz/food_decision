@@ -248,3 +248,46 @@ select option { color: #0b1220; }
 .brand-link:focus {
   text-decoration: none;
 }
+
+.theme-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.chip {
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.92);
+  padding: 9px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.22);
+  transition: transform .08s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.chip:hover {
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.34);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.28);
+}
+
+.chip:active {
+  transform: translateY(0px);
+}
+
+.chip.is-active {
+  border-color: rgba(255,255,255,0.55);
+  background: linear-gradient(90deg, rgba(92,124,250,0.95), rgba(32,201,151,0.9));
+  color: white;
+  box-shadow: 0 14px 34px rgba(0,0,0,0.38);
+}
+
+.chip:focus-visible {
+  outline: 2px solid rgba(255,255,255,0.7);
+  outline-offset: 3px;
+}

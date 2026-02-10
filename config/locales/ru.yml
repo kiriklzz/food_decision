@@ -2,6 +2,9 @@ ru:
   app:
     name: "FoodDecision"
   ui:
+    skip: "Пропустить"
+    no_dish: "Нет блюда"
+    api_js_error: "Ошибка API/JS (смотри console)"
     avg: "Средняя"
     my_rating: "Моя оценка"
     meta: "Категория: %{theme} | Средняя: %{avg} | Моя оценка: %{my}"

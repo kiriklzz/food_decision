@@ -11,14 +11,20 @@
       <div class="row">
         <label><%= t("ui.theme", default: "Theme") %>:</label>
 
-        <select id="themeSelect" class="input">
-        <option value="random"><%= t("ui.random", default: "Random") %></option>
-        <% Dish.distinct.order(:theme).pluck(:theme).each do |th| %>
-            <option value="<%= th %>"><%= t("themes.#{th}", default: th) %></option>
-        <% end %>
-        </select>
+        <div class="theme-chips" id="themeChips">
+        <button type="button" class="chip is-active" data-theme="random">
+            🎲 <%= t("ui.random", default: "Random") %>
+        </button>
 
+        <% Dish.distinct.order(:theme).pluck(:theme).each do |th| %>
+            <button type="button" class="chip" data-theme="<%= th %>">
+            <%= t("themes.#{th}", default: th) %>
+            </button>
+        <% end %>
+        </div>
+        <input type="hidden" id="themeSelect" value="random" />
         <button id="nextBtn" class="btn primary"><%= t("ui.next_image", default: "Next image") %></button>
+        <button id="skipBtn" class="btn ghost"><%= t("ui.skip", default: "Skip") %></button>
         <span id="status" class="muted small"></span>
       </div>
     </div>
@@ -57,6 +63,8 @@
   window.I18N_LOADING = "<%= t('ui.loading', default: 'Loading...') %>";
   window.I18N_SAVED   = "<%= t('ui.saved', default: 'Saved') %>";
   window.I18N_ERROR   = "<%= t('ui.error', default: 'Error') %>";
+  window.I18N_NO_DISH = "<%= t('ui.no_dish', default: 'No dish') %>";
+  window.I18N_API_JS_ERROR = "<%= t('ui.api_js_error', default: 'API/JS error (see console)') %>";
 
   window.I18N_AVG_LABEL = "<%= t('ui.avg', default: 'Avg') %>";
   window.I18N_MY_LABEL  = "<%= t('ui.my_rating', default: 'My rating') %>";

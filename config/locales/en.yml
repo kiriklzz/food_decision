@@ -2,6 +2,9 @@ en:
   app:
     name: "FoodDecision"
   ui:
+    skip: "Skip"
+    no_dish: "No dish"
+    api_js_error: "API/JS error (see console)"
     avg: "Avg"
     my_rating: "My rating"
     meta: "Theme: %{theme} | Avg: %{avg} | My rating: %{my}"
