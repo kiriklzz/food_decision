@@ -4,6 +4,7 @@ module Api
 
     def next
       theme = params[:theme].to_s
+      theme = "" if theme == "random"
       scope = theme.present? ? Dish.where(theme: theme) : Dish.all
 
       dish = scope.order(Arel.sql("RANDOM()")).first

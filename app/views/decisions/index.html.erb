@@ -12,6 +12,7 @@
         <label><%= t("ui.theme", default: "Theme") %>:</label>
 
         <select id="themeSelect" class="input">
+        <option value="random"><%= t("ui.random", default: "Random") %></option>
         <% Dish.distinct.order(:theme).pluck(:theme).each do |th| %>
             <option value="<%= th %>"><%= t("themes.#{th}", default: th) %></option>
         <% end %>
@@ -75,6 +76,7 @@
 
 
   </section>
+
 
     <div style="margin-top:14px;">
       <div class="pill">💡 Tip</div>
