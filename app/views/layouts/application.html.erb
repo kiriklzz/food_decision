@@ -25,8 +25,8 @@
       </div>
 
       <nav class="nav">
-        <%= link_to "🇷🇺", url_for(lang: "ru"), class: "btn ghost", title: "Русский", aria: { label: "Русский" } %>
-        <%= link_to "🇬🇧", url_for(lang: "en"), class: "btn ghost", title: "English", aria: { label: "English" } %>
+        <%= link_to "🇷🇺", switch_locale_url("ru"), class: "btn ghost", title: "Русский", aria: { label: "Русский" } %>
+        <%= link_to "🇬🇧", switch_locale_url("en"), class: "btn ghost", title: "English", aria: { label: "English" } %>
 
         <% if user_signed_in? %>
           <%= button_to t("ui.logout", default: "Logout"),
