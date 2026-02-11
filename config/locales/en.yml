@@ -2,7 +2,7 @@ en:
   app:
     name: "FoodDecision"
   ui:
-    ui:
+    remember_me: "Remember me"
     favorites: "Favorites"
     no_favorites_yet: "No favorites yet. Star some dishes ★"
     stats: "Stats"
