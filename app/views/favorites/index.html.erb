@@ -4,26 +4,116 @@
   <% if @favorites.empty? %>
     <div class="flash"><%= t("ui.no_favorites_yet", default: "No favorites yet. Star some dishes ★") %></div>
   <% else %>
-    <table style="width:100%; border-collapse:collapse; margin-top:12px;">
-      <thead>
-        <tr class="muted small" style="text-align:left;">
-          <th style="padding:10px 8px;"><%= t("ui.dish", default: "Dish") %></th>
-          <th style="padding:10px 8px;"><%= t("ui.category", default: "Category") %></th>
-          <th style="padding:10px 8px;"><%= t("ui.rated_at", default: "Rated at") %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @favorites.each do |f| %>
-          <% th = f.dish&.theme.to_s %>
-          <tr style="border-top:1px solid rgba(255,255,255,0.08);">
-            <td style="padding:10px 8px;"><%= f.dish&.title %></td>
-            <td style="padding:10px 8px;">
-              <span class="pill">#<%= t("themes.#{th}", default: th) %></span>
-            </td>
-            <td style="padding:10px 8px;" class="muted small"><%= f.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+
+    <%# ── KPI row ── %>
+    <div class="kpis" style="margin-top:12px;">
+      <div class="kpi">
+        <%= t("ui.fav_total", default: "Total favorites") %>: <strong><%= @total %></strong>
+      </div>
+      <% if @top_theme %>
+        <div class="kpi">
+          <%= t("ui.fav_top_theme", default: "Top category") %>:
+          <strong><span class="pill">#<%= t("themes.#{@top_theme}", default: @top_theme) %></span></strong>
+        </div>
+      <% end %>
+      <% if @avg_fav_rating %>
+        <div class="kpi">
+          <%= t("ui.fav_avg_rating", default: "Avg rating of favorites") %>: <strong><%= @avg_fav_rating %></strong>
+        </div>
+      <% end %>
+      <div class="kpi">
+        <%= t("ui.fav_rated_count", default: "Rated by you") %>: <strong><%= @rated_count %> / <%= @total %></strong>
+      </div>
+    </div>
+
+    <%# ── By category breakdown ── %>
+    <% if @fav_by_theme.any? %>
+      <div class="card" style="margin-top:14px;">
+        <h3 style="margin:0 0 10px;"><%= t("ui.fav_by_category", default: "By category") %></h3>
+        <table style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr class="muted small" style="text-align:left;">
+              <th style="padding:10px 8px;"><%= t("ui.category", default: "Category") %></th>
+              <th style="padding:10px 8px;"><%= t("ui.count", default: "Count") %></th>
+              <th style="padding:10px 8px;"><%= t("ui.fav_share", default: "Share") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @fav_by_theme.sort_by { |_, v| -v }.each do |theme, cnt| %>
+              <tr style="border-top:1px solid rgba(255,255,255,0.08);">
+                <td style="padding:10px 8px;">
+                  <span class="pill">#<%= t("themes.#{theme}", default: theme) %></span>
+                </td>
+                <td style="padding:10px 8px;"><%= cnt %></td>
+                <td style="padding:10px 8px;" class="muted small">
+                  <%= ((cnt.to_f / @total) * 100).round %>%
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+
+    <%# ── Top-rated favorite highlight ── %>
+    <% if @top_rated_fav&.dish&.average_rating %>
+      <div class="card" style="margin-top:14px;">
+        <h3 style="margin:0 0 6px;"><%= t("ui.fav_top_rated", default: "Highest-rated favorite") %></h3>
+        <p style="margin:0;">
+          <strong><%= @top_rated_fav.dish.title %></strong>
+          <span class="pill" style="margin-left:6px;">#<%= t("themes.#{@top_rated_fav.dish.theme}", default: @top_rated_fav.dish.theme) %></span>
+          <span class="muted small" style="margin-left:8px;">
+            <%= t("ui.avg", default: "Avg") %>: <strong><%= @top_rated_fav.dish.average_rating %></strong>
+          </span>
+        </p>
+      </div>
+    <% end %>
+
+    <%# ── Full favorites table ── %>
+    <div class="card" style="margin-top:14px;">
+      <h3 style="margin:0 0 10px;"><%= t("ui.fav_list", default: "All favorites") %></h3>
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr class="muted small" style="text-align:left;">
+            <th style="padding:10px 8px;"><%= t("ui.dish", default: "Dish") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.category", default: "Category") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.fav_global_avg", default: "Global avg") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.my_rating", default: "My rating") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.rated_at", default: "Rated at") %></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @favorites.each do |f| %>
+            <% th = f.dish&.theme.to_s %>
+            <% my_r = @my_ratings_map[f.dish_id] %>
+            <% gavg = f.dish&.average_rating %>
+            <tr style="border-top:1px solid rgba(255,255,255,0.08);">
+              <td style="padding:10px 8px;"><%= f.dish&.title %></td>
+              <td style="padding:10px 8px;">
+                <span class="pill">#<%= t("themes.#{th}", default: th) %></span>
+              </td>
+              <td style="padding:10px 8px;">
+                <%= gavg ? gavg : "—" %>
+              </td>
+              <td style="padding:10px 8px;">
+                <% if my_r %>
+                  <strong><%= my_r.score %></strong>
+                <% else %>
+                  <span class="muted">—</span>
+                <% end %>
+              </td>
+              <td style="padding:10px 8px;" class="muted small"><%= f.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <% if @first_favorited_at %>
+        <div class="muted small" style="margin-top:10px;">
+          <%= t("ui.fav_since", default: "First favorited") %>: <%= @first_favorited_at.strftime("%Y-%m-%d") %>
+        </div>
+      <% end %>
+    </div>
+
   <% end %>
 </section>
