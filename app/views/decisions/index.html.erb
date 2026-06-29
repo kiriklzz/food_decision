@@ -63,6 +63,7 @@
   window.API_NEXT_URL = "<%= api_dishes_next_path %>";
   window.API_RATINGS_URL = "<%= api_ratings_path %>";
   window.API_FAVORITES_TOGGLE_URL = "<%= api_favorites_toggle_path %>";
+  window.AI_RECOMMENDATIONS_URL = "<%= ai_recommendations_path %>";
 
   window.I18N_LOADING = "<%= t('ui.loading', default: 'Loading...') %>";
   window.I18N_SAVED   = "<%= t('ui.saved', default: 'Saved') %>";
@@ -72,6 +73,8 @@
 
   window.I18N_AVG_LABEL = "<%= t('ui.avg', default: 'Avg') %>";
   window.I18N_MY_LABEL  = "<%= t('ui.my_rating', default: 'My rating') %>";
+  window.I18N_AI_THINKING = "<%= t('ui.ai_thinking', default: 'Thinking...') %>";
+  window.I18N_AI_ERROR = "<%= t('ui.ai_error', default: 'Could not get recommendation') %>";
 
   window.I18N_META = "<%= t('ui.meta',
     default: 'Theme: %{theme} | Avg: %{avg} | My rating: %{my}',
@@ -85,6 +88,30 @@
     "comfort" => t("themes.comfort", default: "comfort")
   }.to_json.html_safe %>;
 </script>
+
+<div class="card ai-card">
+  <div class="ai-card-header">
+    <div>
+      <h2 class="ai-title"><%= t("ui.ai_assistant", default: "AI food assistant") %></h2>
+      <p class="muted small ai-subtitle"><%= t("ui.ai_hint", default: "Tell it what you want, what you have, or what you avoid.") %></p>
+    </div>
+  </div>
+
+  <div class="ai-form">
+    <textarea
+      id="aiMessage"
+      class="input ai-input"
+      rows="3"
+      placeholder="<%= t("ui.ai_placeholder", default: "I want something quick, warm, and not too heavy") %>"
+    ></textarea>
+    <div class="row ai-actions">
+      <button id="aiRecommendBtn" class="btn primary" type="button"><%= t("ui.ai_ask", default: "Ask AI") %></button>
+      <span id="aiStatus" class="muted small"></span>
+    </div>
+  </div>
+
+  <div id="aiRecommendation" class="ai-result" hidden></div>
+</div>
 
 <div style="margin-top:14px;">
   <div class="pill">💡 Tip</div>

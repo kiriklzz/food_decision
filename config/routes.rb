@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
     resources :ratings, only: [:index]
     resources :favorites, only: [:index]
+    post "/ai_recommendations", to: "ai_recommendations#create"
 
     namespace :api do
       get  "/dishes/next", to: "dishes#next"

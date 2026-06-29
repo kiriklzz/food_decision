@@ -51,6 +51,12 @@ en:
     random: "Random"
     preferences: "Preferences"
     save: "Save"
+    ai_assistant: "AI food assistant"
+    ai_hint: "Tell it what you want, what you have, or what you avoid."
+    ai_placeholder: "I want something quick, warm, and not too heavy"
+    ai_ask: "Ask AI"
+    ai_thinking: "Thinking..."
+    ai_error: "Could not get recommendation"
   themes:
     fast: "Fast food"
     sweet: "Desserts"

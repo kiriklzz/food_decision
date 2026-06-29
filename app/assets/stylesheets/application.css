@@ -329,6 +329,59 @@ select option { color: #0b1220; }
   border-radius: 6px;
 }
 
+.ai-card {
+  display: grid;
+  gap: 14px;
+}
+
+.ai-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ai-title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.ai-subtitle {
+  margin: 6px 0 0;
+}
+
+.ai-form {
+  display: grid;
+  gap: 10px;
+}
+
+.ai-input {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.ai-actions {
+  justify-content: space-between;
+}
+
+.ai-result {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.92);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.btn:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
 .brand { display:flex; align-items:center; gap:10px; }
 .brand-sep { opacity: 0.55; margin: 0 2px; }
 

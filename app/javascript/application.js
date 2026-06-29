@@ -42,6 +42,10 @@ function favToggleUrl() {
   return window.API_FAVORITES_TOGGLE_URL || "/api/favorites/toggle";
 }
 
+function aiRecommendationsUrl() {
+  return window.AI_RECOMMENDATIONS_URL || "/ai_recommendations";
+}
+
 async function apiToggleFavorite(dishId) {
   const res = await fetch(favToggleUrl(), {
     method: "POST",
@@ -58,6 +62,26 @@ async function apiToggleFavorite(dishId) {
     throw new Error(`POST favorite toggle failed: ${res.status} ${txt}`);
   }
   return await res.json();
+}
+
+async function apiRecommendFood(message) {
+  const res = await fetch(aiRecommendationsUrl(), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-Token": window.CSRF_TOKEN,
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({ message })
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data.error || `POST AI recommendation failed: ${res.status}`);
+  }
+
+  return data;
 }
 
 function formatMeta(theme, avg, my) {
@@ -115,6 +139,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const favBtn = document.getElementById("favBtn");
   let currentIsFavorite = false;
+
+  const aiMessage = document.getElementById("aiMessage");
+  const aiRecommendBtn = document.getElementById("aiRecommendBtn");
+  const aiStatus = document.getElementById("aiStatus");
+  const aiRecommendation = document.getElementById("aiRecommendation");
+
+  aiRecommendBtn?.addEventListener("click", async () => {
+    const message = aiMessage?.value.trim();
+    if (!message) {
+      aiMessage?.focus();
+      return;
+    }
+
+    aiRecommendBtn.disabled = true;
+    if (aiStatus) aiStatus.textContent = window.I18N_AI_THINKING || "Thinking...";
+    if (aiRecommendation) {
+      aiRecommendation.hidden = true;
+      aiRecommendation.textContent = "";
+    }
+
+    try {
+      const data = await apiRecommendFood(message);
+      if (aiRecommendation) {
+        aiRecommendation.textContent = data.recommendation || "";
+        aiRecommendation.hidden = false;
+      }
+      if (aiStatus) aiStatus.textContent = "";
+    } catch (e) {
+      console.error(e);
+      if (aiStatus) aiStatus.textContent = e.message || (window.I18N_AI_ERROR || "Could not get recommendation");
+      if (aiRecommendation) aiRecommendation.hidden = true;
+    } finally {
+      aiRecommendBtn.disabled = false;
+    }
+  });
 
 favBtn?.addEventListener("click", async () => {
   if (!currentDishId) return;
